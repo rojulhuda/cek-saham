@@ -462,6 +462,17 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') stage.goTo((stage.currentSlide ?? -1) + 1);
   if (e.key === 'ArrowLeft') stage.goTo((stage.currentSlide ?? 1) - 1);
 });
+<script>
+document.addEventListener('click', function(e) {
+  const target = e.target.closest('a, button');
+  if (!target) return;
+
+  if ((target.textContent || '').includes('Dashboard Live')) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    window.location.href = 'Analisis%20Saham%20-%20Dashboard%20Live.html?v=' + Date.now();
+  }
+}, true);
 </script>
 
 </body>
