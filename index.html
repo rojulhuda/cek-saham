@@ -453,7 +453,7 @@ deck-stage:not(:defined) { visibility: hidden; }
 
 </deck-stage>
 
-<script src="https://unpkg.com/deck-stage@latest/dist/deck-stage.js"></script>
+<script src="https://unpkg.com/deck-stage@1.0.0/dist/deck-stage.js"></script>
 <script>
 // Simple deck navigation via keyboard
 document.addEventListener('keydown', e => {
@@ -462,6 +462,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') stage.goTo((stage.currentSlide ?? -1) + 1);
   if (e.key === 'ArrowLeft') stage.goTo((stage.currentSlide ?? 1) - 1);
 });
+</script>
+  
 <script>
 document.addEventListener('click', function(e) {
   const target = e.target.closest('a, button');
