@@ -91,7 +91,43 @@ html,body{height:100%;background:#121212;font-family:var(--font-sans);color:#fff
 @keyframes sh{to{background-position:-200% 0}}
 
 /* ── Bottom panel ───────────────────────────────────── */
-.bot{flex:0 0 252px;background:#181818;border-top:1px solid #27272a;display:flex;flex-direction:column}
+.bot{
+  flex:0 0 252px;
+  background:#181818;
+  border-top:1px solid #27272a;
+  display:flex;
+  flex-direction:column;
+  transition:flex-basis .25s ease;
+}
+
+.bot.is-collapsed{
+  flex-basis:46px;
+}
+
+.bot.is-collapsed .tcontent{
+  display:none;
+}
+
+.bot.is-collapsed .tbar{
+  border-bottom:none;
+}
+
+.panel-toggle{
+  padding:7px 12px;
+  border-radius:999px;
+  border:1px solid #3f3f46;
+  background:#27272a;
+  color:#d4d4d8;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.panel-toggle:hover{
+  border-color:#dc2626;
+  color:#f87171;
+}
 .tbar{display:flex;border-bottom:1px solid #27272a;flex:none}
 .tbtn{
   padding:12px 22px;font-size:13px;font-weight:700;cursor:pointer;
@@ -519,6 +555,12 @@ function App() {
   const [quote, setQuote] = useState(null);
   const [loadingQ, setLoadingQ] = useState(false);
   const [tab, setTab] = useState('reversal');
+  const [bottomOpen, setBottomOpen] = useState(false);
+
+const toggleBottom = () => {
+  setBottomOpen(v => !v);
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 260);
+};
 
   const pick = useCallback(s => {
     const code = s.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
@@ -566,27 +608,54 @@ function App() {
       </main>
 
       {/* Bottom tabs */}
-      <div className="bot">
+      <div className={'bot' + (bottomOpen ? '' : ' is-collapsed')}>
         <div className="tbar">
-          <button className={'tbtn'+(tab==='reversal'?' on':'')} onClick={()=>setTab('reversal')}>
+          <button
+            className={'tbtn'+(tab==='reversal'?' on':'')}
+            onClick={() => {
+              setTab('reversal');
+              setBottomOpen(true);
+            }}
+          >
             Cek Reversal
           </button>
-          <button className={'tbtn'+(tab==='calc'?' on':'')} onClick={()=>setTab('calc')}>
+      
+          <button
+            className={'tbtn'+(tab==='calc'?' on':'')}
+            onClick={() => {
+              setTab('calc');
+              setBottomOpen(true);
+            }}
+          >
             Kalkulator Posisi
           </button>
+      
           <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', paddingRight:20, gap:14 }}>
-            <span style={{ fontSize:11, color:'#3f3f46', fontFamily:'var(--font-mono)' }}>IDX:{sym} · TradingView Live</span>
-            <a href="Analisis%20Saham.html" style={{ fontSize:11, color:'#52525b', fontWeight:600, textDecoration:'none', borderBottom:'1px solid #3f3f46' }}>
+            <button className="panel-toggle" onClick={toggleBottom}>
+              {bottomOpen ? 'Sembunyikan panel' : 'Tampilkan panel'}
+            </button>
+      
+            <span style={{ fontSize:11, color:'#3f3f46', fontFamily:'var(--font-mono)' }}>
+              IDX:{sym} · TradingView Live
+            </span>
+      
+            <a
+              href="Analisis%20Saham.html"
+              style={{ fontSize:11, color:'#52525b', fontWeight:600, textDecoration:'none', borderBottom:'1px solid #3f3f46' }}
+            >
               ← Kembali ke Deck Edukasi
             </a>
           </div>
         </div>
-        <div className="tcontent">
-          {tab==='reversal'
-            ? <ReversalChecker />
-            : <RiskCalc liveEntry={quote?.regularMarketPrice} />
-          }
-        </div>
+      
+        {bottomOpen && (
+          <div className="tcontent">
+            {tab==='reversal'
+              ? <ReversalChecker />
+              : <RiskCalc liveEntry={quote?.regularMarketPrice} />
+            }
+          </div>
+        )}
       </div>
     </div>
   );
